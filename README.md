@@ -5,7 +5,7 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT%20License-brightgreen.svg)](https://opensource.org/licenses/MIT)
 [![Ansible Galaxy](https://img.shields.io/badge/galaxy-polymimetic.node-blue.svg?style=flat)](https://galaxy.ansible.com/polymimetic/node/)
 
-Installs Node.js on Debian/Ubuntu.
+Installs [Node.js](https://nodejs.org) and [npm](https://www.npmjs.com) for GalliumOS.
 
 ## Requirements
 
@@ -21,7 +21,7 @@ Available variables are listed below, along with default values (see `defaults/m
 
     nodejs_version: "6.x"
 
-The Node.js version to install. "6.x" is the default and works on most supported OSes. Other versions such as "0.12", "4.x", "5.x", "6.x", etc. should work on the latest versions of Debian/Ubuntu.
+The Node.js version to install. "6.x" is the default and works on most supported OSes. Other versions such as "0.12", "4.x", "5.x", "8.x", etc. should work as well.
 
     nodejs_install_npm_user: "{{ ansible_ssh_user }}"
 
@@ -71,7 +71,12 @@ To run the role, include it as follows:
 
 This role takes inspiration from the following Ansible roles:
 
+- [nodesource.node](https://github.com/nodesource/ansible-nodejs-role)
 - [geerlingguy.nodejs](https://github.com/geerlingguy/ansible-role-nodejs)
+- [AerisCloud.nodejs](https://github.com/AerisCloud/ansible-nodejs)
+- [sansible.nodejs](https://github.com/sansible/nodejs)
+- [Stouts.nodejs](https://github.com/Stouts/Stouts.nodejs)
+- [tersmitten.nodejs](https://github.com/Oefenweb/ansible-nodejs)
 
 ## License
 

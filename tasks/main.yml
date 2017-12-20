@@ -2,7 +2,9 @@
 # tasks file for node
 
 - name: Ensure apt-transport-https is installed.
-  apt: name=apt-transport-https state=present
+  apt: 
+    name: apt-transport-https 
+    state: present
 
 # Node Installation
 - name: Add Nodesource apt key.

@@ -5,7 +5,7 @@ dependencies: []
 
 galaxy_info:
   author: polymimetic
-  description: Node.js installation for Linux
+  description: Installs Node.js and npm for GalliumOS
   company: "Polymimetic"
   license: license (BSD, MIT)
   min_ansible_version: 2.2
