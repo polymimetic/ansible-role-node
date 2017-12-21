@@ -1,7 +1,7 @@
 # Ansible Role: Node
 
 [![Build Status](https://img.shields.io/travis/polymimetic/ansible-role-node.svg?style=flat-square)](https://travis-ci.org/polymimetic/ansible-role-node)
-[![Release](https://img.shields.io/github/release/polymimetic/ansible-role-node/all.svg?style=flat-square)](https://github.com/polymimetic/ansible-role-node/releases)
+[![Release](https://img.shields.io/github/tag/polymimetic/ansible-role-node.svg?style=flat-square)](https://github.com/polymimetic/ansible-role-node/releases)
 [![License: MIT](https://img.shields.io/badge/license-MIT%20License-brightgreen.svg?style=flat-square)](https://opensource.org/licenses/MIT)
 [![Ansible Galaxy](https://img.shields.io/badge/galaxy-polymimetic.node-blue.svg?style=flat-square)](https://galaxy.ansible.com/polymimetic/node/)
 
