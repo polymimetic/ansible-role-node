@@ -2,7 +2,7 @@
 #
 # Ansible role test shim.
 #
-# Usage: [OPTIONS] ./tests/test.sh
+# Usage: [OPTIONS] ./tests/run-test.sh
 #   - distro: a supported Docker distro version (default = "xenial")
 #   - playbook: a playbook in the tests directory (default = "test.yml")
 #   - cleanup: whether to remove the Docker container (default = true)

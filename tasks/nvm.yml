@@ -1,0 +1,56 @@
+---
+# Install node via Node Version Manager (NVM)
+
+- name: Get stats on NVM
+  stat: path="{{ nvm_dest }}"
+  register: nvm_stat
+
+- name: Download nvm script
+  get_url:
+    dest: "{{ nvm_working_path }}"
+    url: https://raw.githubusercontent.com/creationix/nvm/{{ nvm_version }}/install.sh
+  when: not nvm_stat.stat.exists
+
+- name: Run nvm script
+  command: "bash {{ nvm_working_path }}/install.sh"
+  become: true
+  become_user: "{{node_user}}"
+  when: not nvm_stat.stat.exists
+
+- name: Update .nvm dir permission
+  file:
+    path: "{{ nvm_dest }}"
+    group: "{{ node_user }}"
+    owner: "{{ node_user }}"
+    mode: 0755
+    recurse: yes
+    state: directory
+
+- name: Add nvm to ~/.bashrc
+  lineinfile: 
+    dest: "{{ nvm_working_path }}/.bashrc" 
+    line: "source ~/.nvm/nvm.sh"
+
+- name: Install node
+  shell: "source {{ nvm_dest }}/nvm.sh && nvm install {{ item }}"
+  become: true
+  become_user: "{{node_user}}"
+  args:
+     executable: /bin/bash
+  with_items: "{{ nvm_node_versions }}"
+
+- name: Set default Node version {{ nvm_default_node_version }} to be used in new shell
+  shell: "source {{nvm_dest}}/nvm.sh && nvm alias default {{nvm_default_node_version}}"
+  args:
+     executable: /bin/bash
+  become: true
+  become_user: "{{node_user}}"
+
+# NPM Installation
+- name: Install npm module(s)
+  shell: bash -lc "source {{ nvm_dest }}/nvm.sh && nvm use {{ item.0 }} && npm install -g {{ item.1.name | default(item.1) }}@{{ item.1.version | default('latest') }}"
+  become: true
+  become_user: "{{node_user}}"
+  with_nested:
+    - "{{ nvm_node_versions }}"
+    - "{{ npm_global_packages }}"

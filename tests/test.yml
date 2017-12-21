@@ -2,19 +2,27 @@
 - hosts: all
 
   vars:
-    nodejs_version: "8.x"
-    nodejs_install_npm_user: root
+    node_version: "8.x"
+    node_user: root
     npm_config_prefix: /root/.npm-global
     npm_config_unsafe_perm: "true"
-    nodejs_npm_global_packages:
+    npm_global_packages:
       - node-sass
       - name: jslint
         version: 0.9.6
       - name: yo
 
   pre_tasks:
-    - name: Update apt cache.
+    - name: Update apt cache
       apt: update_cache=yes cache_valid_time=600
+
+    - name: Create test user
+      user:
+        name: "{{ node_user }}"
+        groups: sudo
+        state: present
+        append: yes
+      when: node_user != 'root'
 
     - name: Display the Ansible version info
       debug:

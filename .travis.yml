@@ -15,8 +15,8 @@ script:
   - export test_suite=false
 
   # Run tests.
-  - chmod +x ${PWD}/tests/test.sh
-  - ${PWD}/tests/test.sh
+  - chmod +x ${PWD}/tests/run-test.sh
+  - ${PWD}/tests/run-test.sh
 
   # Ensure Node.js is installed.
   - 'docker exec --tty ${container_id} env TERM=xterm which node'

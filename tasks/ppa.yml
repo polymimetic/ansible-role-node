@@ -1,0 +1,101 @@
+---
+# Install node via Nodesource PPA
+
+- name: Add Nodesource apt key.
+  apt_key:
+    url: https://keyserver.ubuntu.com/pks/lookup?op=get&fingerprint=on&search=0x1655A0AB68576280
+    id: "68576280"
+    state: present
+
+# - name: Add Nodesource apt key
+#   apt_key:
+#     url: https://deb.nodesource.com/gpgkey/nodesource.gpg.key
+#     state: present
+
+- name: Add NodeSource repositories for Node.js.
+  apt_repository:
+    repo: "{{ item }}"
+    state: present
+  with_items:
+    - "deb https://deb.nodesource.com/node_{{ node_version }} {{ ansible_distribution_release }} main"
+    - "deb-src https://deb.nodesource.com/node_{{ node_version }} {{ ansible_distribution_release }} main"
+  register: node_repo
+
+- name: Update apt cache if repo was added.
+  apt: update_cache=yes
+  when: node_repo.changed
+
+- name: Ensure Node.js and npm are installed.
+  apt: "name=nodejs={{ node_version|regex_replace('x', '') }}* state=present"
+
+# NPM Configuration
+- name: Create npm global directory
+  file:
+    path: "{{ npm_config_prefix }}"
+    owner: "{{ node_user }}"
+    group: "{{ node_user }}"
+    state: directory
+
+# - name: Add npm_config_prefix bin directory to global $PATH
+#   copy:
+#     dest: /etc/profile.d/npm.sh
+#     content: "export {{ item.key }}={{ item.value }}"
+#     mode: 0664
+#   with_items:
+#     - { key: "PATH", value: "{{ npm_config_prefix }}/bin:$PATH" }
+#     - { key: "NPM_CONFIG_PREFIX", value: "{{ npm_config_prefix }}" }
+#     - { key: "NODE_PATH", value: "$NODE_PATH:{{ npm_config_prefix }}/lib/node_modules" }
+
+- name: Add npm_config_prefix bin directory to global $PATH.
+  template:
+    src: npm.sh.j2
+    dest: /etc/profile.d/npm.sh
+    mode: 0644
+
+# NPM User Configuration
+- name: Set npm global packages prefix
+  command: npm config set prefix "{{ npm_config_prefix }}"
+  changed_when: false
+  become: true
+  become_user: "{{ node_user }}"
+  when: node_user is defined and node_user != 'root'
+
+- name: Ensure .npmrc has npm config prefix
+  lineinfile:
+    path: "/home/{{ node_user }}/.npmrc"
+    line: "prefix={{ npm_config_prefix }}"
+    create: yes
+  when: node_user is defined and node_user != 'root'
+
+- name: Configure dotfile paths for node
+  lineinfile:
+    path: "/home/{{ node_user }}/.profile"
+    line: "{{ item }}"
+    create: yes
+    owner: "{{ node_user }}"
+    group: "{{ node_user }}"
+  with_items:
+    - "NPM_PACKAGES=\"{{ npm_config_prefix }}\""
+    - "PATH=\"$NPM_PACKAGES/bin:$PATH\""
+    - "unset MANPATH"
+    - "export MANPATH=\"$NPM_PACKAGES/share/man:$(manpath)\""
+  when: node_user is defined and node_user != 'root'
+
+# NPM Installation
+- name: Ensure npm global packages are installed.
+  npm:
+    name: "{{ item.name | default(item) }}"
+    state: "{{ item.state | default('latest') }}"
+    version: "{{ item.version | default('latest') }}"
+    global: yes
+    executable: "{{ item.executable | default(omit) }}"
+  environment:
+    NPM_CONFIG_PREFIX: "{{ npm_config_prefix }}"
+    NODE_PATH: "{{ npm_config_prefix }}/lib/node_modules"
+    NPM_CONFIG_UNSAFE_PERM: "{{ npm_config_unsafe_perm }}"
+  with_items: "{{ npm_global_packages }}"
+
+- name: Install packages defined in a given package.json.
+  npm:
+    path: "{{ nodejs_package_json_path }}"
+  when: nodejs_package_json_path is defined and nodejs_package_json_path

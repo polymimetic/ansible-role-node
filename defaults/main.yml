@@ -3,10 +3,37 @@
 
 # Set the version of Node.js to install ("0.12", "4.x", "5.x", "6.x", "8.x").
 # Version numbers from Nodesource: https://github.com/nodesource/distributions
-nodejs_version: "6.x"
+node_version: "6.x"
+
+# Build dependencies for packages (will be installed with apt).
+node_dependencies:
+  - apt-transport-https
+  - build-essential
+  - libssl-dev
+  - git
+  - curl
+
+# Node installation type. Can be 'ppa' or 'nvm'.
+node_install_type: ppa
 
 # The user for whom the npm packages will be installed.
-# nodejs_install_npm_user: username
+# node_user: username
+
+# The NVM working directory.
+nvm_working_path: "/home/{{ node_user }}"
+
+# Destination of the NVM destination directory.
+nvm_dest: "{{ nvm_working_path }}/.nvm"
+
+# Set the version of NVM to install.
+nvm_version: "v0.33.6"
+
+# Set the default node version for NVM to install.
+nvm_default_node_version: "8.9.1"
+
+# Array of node versions to install via NVM.
+nvm_node_versions: 
+  - "{{nvm_default_node_version}}"
 
 # The directory for global installations.
 npm_config_prefix: "/usr/local/lib/npm"
@@ -15,7 +42,7 @@ npm_config_prefix: "/usr/local/lib/npm"
 npm_config_unsafe_perm: "false"
 
 # Define a list of global packages to be installed with NPM.
-nodejs_npm_global_packages: []
+npm_global_packages: []
 #  # Install a specific version of a package.
 #  - name: jslint
 #    version: 0.9.3
